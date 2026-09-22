@@ -1,0 +1,67 @@
+[build]
+  publish = "./dist"
+
+[[edge_functions]]
+  path = "/api/v1/sentence"
+  function = "sentence.v1"
+
+[[edge_functions]]
+  path = "/api/v2/sentence"
+  function = "sentence.v2"
+
+[[edge_functions]]
+  path = "/api/v2/sentence/text"
+  function = "sentence.text.v2"
+
+[[edge_functions]]
+  path = "/debug/stctext"
+  function = "d"
+
+[[headers]]
+  for = "/api/v1/sentence"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+[[headers]]
+  for = "/api/v2/sentence"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+[[headers]]
+  for = "/api/v2/sentence/text"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+
+# Required environment variables — set in Netlify UI dashboard with "Functions" scope:
+#   UPSTASH_REDIS_REST_URL   - Upstash Redis REST endpoint
+#   UPSTASH_REDIS_REST_TOKEN  - Upstash Redis REST token
+#   UPSTASH_REDIS_SET         - Redis Set key name (default: dlystc:sentences:pool)
+#
+# Cache control (global defaults; per-function overrides use _{PREFIX} suffix):
+#   CACHE_MAX_AGE                        - CDN max-age in seconds (default: 8)
+#   CACHE_STALE_WHILE_REVALIDATE         - CDN stale-while-revalidate in seconds (default: 60)
+#   CACHE_MAX_AGE_SENTENCE_V1            - Override for /api/v1/sentence
+#   CACHE_STALE_WHILE_REVALIDATE_SENTENCE_V1
+#   CACHE_MAX_AGE_SENTENCE_V2            - Override for /api/v2/sentence
+#   CACHE_STALE_WHILE_REVALIDATE_SENTENCE_V2
+#   CACHE_MAX_AGE_SENTENCE_TEXT_V2       - Override for /api/v2/sentence/text
+#   CACHE_STALE_WHILE_REVALIDATE_SENTENCE_TEXT_V2
+#
+# ⚠️ netlify.toml environment variables are NOT available to Edge Functions.
+#    These must be set in the Netlify UI with scope "Functions".
+#    For local dev, use .env file.
+
+[context.production.environment]
+  UPSTASH_REDIS_SET = "dlystc:sentences:pool"
+
+[context.branch-deploy.environment]
+  UPSTASH_REDIS_SET = "dlystc:sentences:pool"
+
+[context.deploy-preview.environment]
+  UPSTASH_REDIS_SET = "dlystc:sentences:pool"
